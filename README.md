@@ -1,102 +1,53 @@
+#  🚀 queuectl — CLI-Based Background Job Queue
 
-🚀 queuectl — CLI-Based Background Job Queue System
-
-A lightweight Node.js-based background job queue that supports persistent storage, multiple workers, retry with exponential backoff, dead letter queue (DLQ), and job priority handling.
-Built entirely using SQLite and Node.js CLI commands.**
-
-A lightweight Node.js-based background job queue that supports persistent storage, multiple workers, retry with exponential backoff, dead letter queue (DLQ), and job priority handling.
-Built entirely using SQLite and Node.js CLI commands.
+A lightweight Node.js-based background job queue supporting persistent storage, multiple workers, retries with exponential backoff, DLQ (Dead Letter Queue), and priority scheduling — all powered by SQLite and a clean CLI.
 
 
-🧰 Tech Stack
+#  🧰 Tech Stack
 
 Node.js
+
 Commander.js (CLI)
+
 Better-SQLite3 (database)
+
 UUID (unique job IDs)
 
-# 🚀 Start the minimal web dashboard (for monitoring)
-node src/server.js
 
-# ⚙️ Start a worker (processes jobs from the queue)
-node src/worker.js
+#  🛠️ Commands
+Start Monitoring Dashboard  :  node src/server.js
+Start a Worker   : node src/worker.js
+node src/worker.js  :: node bin/queuectl.js enqueue "echo 'Hello world!'"
+List All Jobs : node bin/queuectl.js list
+Reset Entire Queue Database : node bin/queuectl.js reset
 
-# 🧩 Enqueue a new job (add to the queue)
-node bin/queuectl.js enqueue "echo 'Hello world!'"
+# 🎥 Demo Video:
+Drive Link: https:…
 
-# 📋 List all jobs in the queue (pending, completed, dead, etc.)
-node bin/queuectl.js list
+#  🧩 Features
 
-# 💀 Show all jobs in the Dead Letter Queue (failed after retries)
-node bin/queuectl.js dlq:list
+✅ Persistent job storage (SQLite)
 
-# 🔁 Retry a specific job from the DLQ using its Job ID
-node bin/queuectl.js dlq:retry 123e4567-e89b-12d3-a456-426614174000
+✅ Multiple worker processing
 
-# 🧼 Clear all jobs from the database (useful for testing)
-node bin/queuectl.js reset
+✅ Exponential backoff retry system
 
-# demo QueueCTL LInk
-https://drive.google.com/file/d/1lqrU8E24gGeJkd_Ydamj8cvi0Pf0JdQn/view?usp=drive_link
-
-🧩 Features
-
-✅ Persistent job storage (SQLite-based)
-✅ Multiple worker support
-✅ Retry mechanism with exponential backoff
 ✅ Dead Letter Queue (DLQ)
-✅ Priority-based job scheduling (High → Low)
-✅ Configuration management
-✅ Clean CLI interface
-✅ Minimal logging & job tracking
 
+✅ Priority-based scheduling (High → Low)
 
-  🏗️ Architecture Overview
-queuectl/
-├── bin/
-│   └── queuectl.js         # CLI entry point
-├── src/
-│   ├── db.js               # SQLite connection and schema
-│   ├── jobStore.js         # Job storage, fetching, updating
-│   ├── worker.js           # Worker logic for job execution
-│   ├── config.js           # Configuration read/write
-│   └── utils.js            # Helper functions (logging, etc.)
-├── data/
-│   └── queue.db            # SQLite database (auto-created)
-├── package.json
-└── README.md
+✅ Simple & powerful CLI
 
+✅ Configurable poll intervals & retry rules
 
+#  ⚡ How It Works (Short)
 
-🧠 USAGE
-⚡ How It Works
+Enqueue → Job saved in SQLite with pending state.
 
-Enqueue Command
-Adds a job into SQLite with state = pending.
-Each job has:
+Worker → Picks highest-priority job, executes, updates state.
 
-command (string)
+Retry → On failure, job retries with exponential backoff.
 
-priority (integer)
+DLQ → After max retries, job moves to Dead Letter Queue.
 
-attempts, max_retries, timestamps, etc.
-
-Worker Start
-Workers continuously poll the DB, picking the highest-priority pending job.
-After successful execution → marked as completed.
-On failure → retried using exponential backoff.
-
-DLQ (Dead Letter Queue)
-If a job fails more than max_retries, it’s moved to DLQ for manual retry.
-
-Configurable Settings
-You can adjust retry timing, poll intervals, and backoff base via CLI.
-
-🌟 Bonus Features Implemented
-
-✅ Job priority queue
-✅ Retry mechanism with exponential backoff
-✅ Multiple worker support
-✅ Dead Letter Queue
-✅ Persistent storage
-✅ Configuration system
+Manual Retry → Pick any failed job and requeue it.
